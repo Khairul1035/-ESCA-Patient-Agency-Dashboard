@@ -17,7 +17,7 @@ st.sidebar.markdown(f"""
 **Server Time:** {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
 """)
 
-# Language Selection (Crucial for Global Medical Tourism)
+# Language Selection
 lang = st.sidebar.selectbox("🌐 Select Language / Pilih Bahasa", ["English", "Bahasa Melayu", "العربية"])
 
 st.sidebar.divider()
@@ -73,7 +73,7 @@ if menu == "Registration & Intake":
         st.success("Patient registered and Value Passport synced to Hospital HIS.")
 
 # ---------------------------------------------------------
-# PAGE 2: CLINICAL COMMAND CENTER (Conflict & Darurah)
+# PAGE 2: CLINICAL COMMAND CENTER
 # ---------------------------------------------------------
 elif menu == "Clinical Command Center":
     st.title("👨‍⚕️ Real-Time Clinical Monitor")
@@ -83,7 +83,6 @@ elif menu == "Clinical Command Center":
     col1, col2 = st.columns([2, 1])
     with col1:
         st.subheader("Clinical Vitals (HIS Integration)")
-        # Mocking real-time vitals
         vitals = pd.DataFrame({
             "Metric": ["Heart Rate (BPM)", "Blood Pressure", "SpO2 (%)", "Temp (°C)"],
             "Current": [115, "90/60", 92, 37.2],
@@ -110,7 +109,7 @@ elif menu == "Clinical Command Center":
         st.progress(1.0, text="Ethical Justice")
 
 # ---------------------------------------------------------
-# PAGE 3: PATIENT AGENCY LOG (The Audit Trail)
+# PAGE 3: PATIENT AGENCY LOG
 # ---------------------------------------------------------
 elif menu == "Patient Agency Log":
     st.title("📜 Patient Agency & Interaction Log")
@@ -129,11 +128,12 @@ elif menu == "Patient Agency Log":
     st.text_area("Guardian Comments")
 
 # ---------------------------------------------------------
-# PAGE 4: FINANCIAL & AUDIT
+# PAGE 4: FINANCIAL & AUDIT (Corrected Version)
 # ---------------------------------------------------------
 else:
     st.title("💰 Ethical Justice: Billing & Audit")
     
+    # Corrected column naming: c1 and c2
     c1, c2 = st.columns(2)
     with c1:
         st.subheader("Real-Time Billing")
@@ -142,11 +142,11 @@ else:
         
         costs = {
             "Item": ["Emergency Surgery", "ICU Ward (Daily)", "Halal Anesthesia", "ESCA+ Spiritual Care"],
-            "Amount (RM)": [12000, 2500, 800, 0] # Spiritual care is free in this ethical model
+            "Amount (RM)": [12000, 2500, 800, 0] 
         }
         st.table(pd.DataFrame(costs))
         
-    with col2:
+    with c2: # FIXED: Changed from col2 to c2
         st.subheader("Institutional Integrity Report")
         fig = px.pie(values=[90, 10], names=['Compliant', 'Non-Compliant'], title="Hospital Integrity Score")
         st.plotly_chart(fig)
