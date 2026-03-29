@@ -75,10 +75,9 @@ elif menu == "2. Medical Team & Live OT Simulation":
     col_vid, col_stat = st.columns([2, 1])
     
     with col_vid:
-        st.subheader("📹 Live Procedure Visual (Simulation)")
-        # Menggunakan video simulasi perubatan dari YouTube untuk tujuan pendidikan
-        st.video("https://www.youtube.com/watch?v=V90I2tE9U6Y") 
-        st.info("🔒 Secure Link: This feed is encrypted and restricted to authorized guardians only.")
+       # Gantikan dengan link baru di bawah (Animasi Bypass Jantung 3D - Embed Friendly)
+    st.video("https://www.youtube.com/watch?v=5UeS7M2i0Q8") 
+    st.info("🔒 Secure Link: This feed is encrypted and restricted to authorized guardians only.")
 
     with col_stat:
         st.subheader("📊 Real-Time Status")
