@@ -1,11 +1,11 @@
 import streamlit as st
 import pandas as pd
-import time
 from datetime import datetime
 import plotly.express as px
+import plotly.graph_objects as go
 
 # --- CONFIGURATION ---
-st.set_page_config(page_title="ESCA+ Industrial Dashboard", layout="wide", page_icon="🏥")
+st.set_page_config(page_title="ESCA+ Platinum Dashboard", layout="wide", page_icon="🌙")
 
 # --- LEAD RESEARCHER & SYSTEM INFO ---
 st.sidebar.markdown(f"""
@@ -13,142 +13,167 @@ st.sidebar.markdown(f"""
 **MOHD KHAIRUL RIDHUAN BIN MOHD FADZIL**
 *Reframing Islamic Medical Tourism*
 
+**Institution:** Ampang Specialist Center
 **System Status:** 🟢 Live
 **Server Time:** {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
 """)
 
-# Language Selection
-lang = st.sidebar.selectbox("🌐 Select Language / Pilih Bahasa", ["English", "Bahasa Melayu", "العربية"])
-
+lang = st.sidebar.selectbox("🌐 Select Language", ["English", "Bahasa Melayu", "العربية"])
 st.sidebar.divider()
 
 # --- APP NAVIGATION ---
-menu = st.sidebar.radio("Main Menu", ["Registration & Intake", "Clinical Command Center", "Patient Agency Log", "Financial & Audit"])
+menu = st.sidebar.radio("Main Menu", [
+    "Good Samaritan Protocol (Accident Intake)", 
+    "Medical Team Profiles", 
+    "Live Surgery Procedure", 
+    "Patient Agency & Value Passport", 
+    "Financial & Audit"
+])
 
 # --- SESSION STATE (Mock Database) ---
-if 'patient_data' not in st.session_state:
-    st.session_state.patient_data = {
-        "name": "Sarah J. Abdullah",
-        "id": "P-992837",
-        "citizenship": "United Kingdom",
-        "passport_ic": "UK-8822990",
-        "admission_date": datetime.now().strftime('%d/%m/%Y %H:%M'),
-        "urgency": "High (Red Zone)",
-        "agency_decisions": []
-    }
+if 'patient_status' not in st.session_state:
+    st.session_state.patient_status = "Unidentified" # Default for accidents
+if 'surgery_step' not in st.session_state:
+    st.session_state.surgery_step = 0
+if 'agency_decisions' not in st.session_state:
+    st.session_state.agency_decisions = []
 
 # ---------------------------------------------------------
-# PAGE 1: REGISTRATION & INTAKE
+# PAGE 1: GOOD SAMARITAN PROTOCOL (For Strangers/Witnesses)
 # ---------------------------------------------------------
-if menu == "Registration & Intake":
-    st.title("📋 Patient Intake & Value Passport")
+if menu == "Good Samaritan Protocol (Accident Intake)":
+    st.title("🚑 Good Samaritan & Accident Witness Protocol")
+    st.info("Protocol for witnesses who bring an unidentified victim to the hospital.")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("Step 1: Witness/Samaritan Registration")
+        witness_name = st.text_input("Witness Full Name")
+        witness_phone = st.text_input("Witness Contact Number")
+        st.write("---")
+        st.subheader("Step 2: Legal Protection Notice")
+        st.success("""
+        **Notice to Witness:** 
+        Under the 'Duty of Care' and Ethical Justice domain, you are protected by hospital policy for 
+        bringing a victim in good faith. You are NOT liable for the victim's medical costs.
+        """)
+        
+    with col2:
+        st.subheader("Step 3: Preliminary Victim Details")
+        st.write("If identity is unknown, use 'Unknown Patient' profile.")
+        gender = st.selectbox("Estimated Gender", ["Male", "Female", "Unknown"])
+        location = st.text_input("Accident Location", value="MRR2 Ampang")
+        belongings = st.text_area("List of belongings found (ID, Wallet, Phone)")
+        
+        if st.button("Finalize Emergency Admission"):
+            st.session_state.patient_status = "Identified (Emergency)"
+            st.success("Triage Notified. Patient AX-2024 registered. Medical Team Dispatched.")
+
+# ---------------------------------------------------------
+# PAGE 2: MEDICAL TEAM PROFILES (Clinical Competence)
+# ---------------------------------------------------------
+elif menu == "Medical Team Profiles":
+    st.title("👨‍⚕️ Assigned Medical Specialists")
+    st.write("Building trust through Transparency and Clinical Competence.")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.image("https://cdn-icons-png.flaticon.com/512/3774/3774299.png", width=150)
+        st.subheader("Dr. Adam Syarif")
+        st.write("**Specialty:** Senior Trauma & Cardiothoracic Surgeon")
+        st.write("**Education:** MBBS (Malaya), FRCS (London, UK)")
+        st.write("**Experience:** 15+ years in Emergency Surgical Interventions")
+        st.info("Note: Dr. Adam is the Primary Surgeon for current emergency case.")
+        
+    with col2:
+        st.image("https://cdn-icons-png.flaticon.com/512/3304/3304567.png", width=150)
+        st.subheader("Dr. Siti Hajar")
+        st.write("**Specialty:** Anesthesiologist & Critical Care")
+        st.write("**Education:** MD (USM), Master of Medicine (Anaesth)")
+        st.write("**Special Focus:** Shariah-Compliant Pain Management (Halal Pharma)")
+
+# ---------------------------------------------------------
+# PAGE 3: LIVE SURGERY PROCEDURE (Real-Time Tracker)
+# ---------------------------------------------------------
+elif menu == "Live Surgery Procedure":
+    st.title("🔴 Live Procedure Monitor: Operating Theater 04")
+    st.write("Real-time tracking for family/guardians to monitor clinical and ethical compliance.")
+    
+    steps = [
+        "Pre-op Stabilization & Anesthesia", 
+        "Surgical Incision (Procedure Started)", 
+        "Main Clinical Intervention (Repair)", 
+        "Closure & Cleaning", 
+        "Recovery Room (Post-Op)"
+    ]
+    
+    # Progress Bar for Surgery
+    st.session_state.surgery_step = st.slider("Surgery Progress Stage", 0, 4, st.session_state.surgery_step)
+    st.progress((st.session_state.surgery_step + 1) / 5)
+    
+    st.subheader(f"Current Status: {steps[st.session_state.surgery_step]}")
     
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader("Personal Identification")
-        name = st.text_input("Full Name", value=st.session_state.patient_data["name"])
-        citizenship = st.selectbox("Citizenship", ["Malaysian", "International (Tourist)"], index=1)
-        id_num = st.text_input("IC / Passport Number", value=st.session_state.patient_data["passport_ic"])
-        country = st.text_input("Country of Origin", value="United Kingdom")
+        st.write("📋 **Clinical Checklist**")
+        st.checkbox("Vitals Monitored (Continuous)", value=True)
+        st.checkbox("Internal Bleeding Controlled", value=st.session_state.surgery_step >= 2)
         
     with col2:
-        st.subheader("Admission Details")
-        st.write(f"**Date & Time of Intake:** {st.session_state.patient_data['admission_date']}")
-        st.selectbox("Triage Level", ["Red (Critical)", "Yellow (Semi-Critical)", "Green (Non-Urgent)"], index=0)
-        st.text_input("Insurance Provider", value="Allianz Global Care")
+        st.write("🌙 **ESCA+ Ethical Checklist**")
+        st.checkbox("Minimum Body Exposure (Aurat Draping)", value=True)
+        st.checkbox("Halal-Certified Medical Supplies Used", value=True)
+        
+    st.info("System Alert: Surgery is proceeding smoothly according to JCI and ESCA+ Ethics protocols.")
 
+# ---------------------------------------------------------
+# PAGE 4: PATIENT AGENCY & VALUE PASSPORT
+# ---------------------------------------------------------
+elif menu == "Patient Agency & Value Passport":
+    st.title("🛡️ Patient Agency & Conflict Resolution")
+    
+    # Radar Chart for ESCA+ Domains
+    st.subheader("Domain Alignment Matrix")
+    categories = ['Clinical Competence', 'Spiritual Sensitivity', 'Ethical Justice', 'Institutional Integrity', 'Patient Agency']
+    values = [98, 85, 100, 95, 90]
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatterpolar(r=values, theta=categories, fill='toself', name='ESCA+ Alignment'))
+    fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False)
+    st.plotly_chart(fig)
+    
     st.divider()
-    st.subheader("🛡️ ESCA+ Value Passport (Patient Agency)")
-    st.info("Ask the patient or guardian to select their preferred care values.")
-    
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        gender = st.radio("Clinical Gender Preference", ["Same Gender", "No Preference", "Flexible (Darurah)"])
-    with c2:
-        diet = st.multiselect("Dietary Requirements", ["Halal-Certified", "Vegan", "Vegetarian", "No Beef"])
-    with c3:
-        modesty = st.toggle("Activate High Modesty Protocol (Extra Draping)")
-
-    if st.button("Finalize Registration"):
-        st.success("Patient registered and Value Passport synced to Hospital HIS.")
-
-# ---------------------------------------------------------
-# PAGE 2: CLINICAL COMMAND CENTER
-# ---------------------------------------------------------
-elif menu == "Clinical Command Center":
-    st.title("👨‍⚕️ Real-Time Clinical Monitor")
-    
-    st.warning(f"🚨 **EMERGENCY ALERT:** Patient {st.session_state.patient_data['name']} requires immediate intervention.")
-    
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        st.subheader("Clinical Vitals (HIS Integration)")
-        vitals = pd.DataFrame({
-            "Metric": ["Heart Rate (BPM)", "Blood Pressure", "SpO2 (%)", "Temp (°C)"],
-            "Current": [115, "90/60", 92, 37.2],
-            "Status": ["High", "Low", "Critical", "Normal"]
+    st.warning("⚠️ **Darurah Protocol Alert:** Only Male Surgeon available for life-saving surgery.")
+    if st.button("Confirm Guardian Authorization for Darurah Mode"):
+        st.session_state.agency_decisions.append({
+            "Time": datetime.now().strftime('%H:%M'),
+            "Action": "Darurah Consent",
+            "Details": "Guardian authorized Dr. Adam (Male) for emergency surgery."
         })
-        st.table(vitals)
-        
-        st.subheader("Decision Support: The 'Darurah' Resolver")
-        st.error("**Conflict Identified:** Patient prefers same-gender care, but current available specialist is Male (Dr. Adam).")
-        
-        if st.button("🚨 TRIGGER EMERGENCY DARURAH OVERRIDE"):
-            timestamp = datetime.now().strftime('%H:%M:%S')
-            st.session_state.patient_data["agency_decisions"].append({
-                "time": timestamp,
-                "event": "Darurah Override Triggered",
-                "details": "Surgery proceeded with Male Dr due to life-saving urgency."
-            })
-            st.success(f"Darurah Protocol activated at {timestamp}. All clinical actions logged for audit.")
-
-    with col2:
-        st.subheader("ESCA+ Domain Status")
-        st.progress(0.9, text="Clinical Competence")
-        st.progress(0.7, text="Spiritual Sensitivity")
-        st.progress(1.0, text="Ethical Justice")
+        st.success("Authorization Logged.")
 
 # ---------------------------------------------------------
-# PAGE 3: PATIENT AGENCY LOG
-# ---------------------------------------------------------
-elif menu == "Patient Agency Log":
-    st.title("📜 Patient Agency & Interaction Log")
-    st.write("This log tracks every decision made by the patient or guardian for transparency.")
-    
-    if st.session_state.patient_data["agency_decisions"]:
-        df_log = pd.DataFrame(st.session_state.patient_data["agency_decisions"])
-        st.table(df_log)
-    else:
-        st.write("No decisions logged yet.")
-        
-    st.divider()
-    st.subheader("Post-Procedure Integrity Check")
-    st.checkbox("Aurat/Modesty was maintained during surgery")
-    st.checkbox("Patient was informed of 'Darurah' override post-stabilization")
-    st.text_area("Guardian Comments")
-
-# ---------------------------------------------------------
-# PAGE 4: FINANCIAL & AUDIT (Corrected Version)
+# PAGE 5: FINANCIAL & AUDIT
 # ---------------------------------------------------------
 else:
-    st.title("💰 Ethical Justice: Billing & Audit")
+    st.title("💰 Ethical Justice: Billing & Accountability")
     
-    # Corrected column naming: c1 and c2
     c1, c2 = st.columns(2)
     with c1:
-        st.subheader("Real-Time Billing")
-        bill_type = "International Rate" if st.session_state.patient_data["citizenship"] == "International (Tourist)" else "Malaysian Rate"
-        st.write(f"**Billing Category:** {bill_type}")
+        st.subheader("Transparent Real-Time Billing")
+        bill = pd.DataFrame({
+            "Service Item": ["Emergency Surgery", "ICU Room", "Good Samaritan Intake Fee", "Spiritual Support"],
+            "Cost (RM)": [15000, 2000, 0, 0]
+        })
+        st.table(bill)
+        st.caption("Note: Good Samaritan intake and Spiritual Support are free under Ethical Justice.")
         
-        costs = {
-            "Item": ["Emergency Surgery", "ICU Ward (Daily)", "Halal Anesthesia", "ESCA+ Spiritual Care"],
-            "Amount (RM)": [12000, 2500, 800, 0] 
-        }
-        st.table(pd.DataFrame(costs))
-        
-    with c2: # FIXED: Changed from col2 to c2
-        st.subheader("Institutional Integrity Report")
-        fig = px.pie(values=[90, 10], names=['Compliant', 'Non-Compliant'], title="Hospital Integrity Score")
-        st.plotly_chart(fig)
-        
-    st.button("Generate Compliance Certificate for MHTC/JAKIM")
+    with c2:
+        st.subheader("Audit & Integrity Certificate")
+        st.write("Audit compliant for MHTC and JAKIM standards.")
+        st.button("📄 Generate ESCA+ Compliance PDF")
+
+    st.divider()
+    st.write(f"**Lead Researcher:** Mohd Khairul Ridhuan Bin Mohd Fadzil (2025)")
