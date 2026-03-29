@@ -17,7 +17,8 @@ st.sidebar.markdown(f"""
 **Server Time:** {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
 """)
 
-lang = st.sidebar.selectbox("🌐 Select Language", ["English", "Bahasa Melayu", "العربية"])
+# Support for Multi-language as per Medical Tourism Needs
+lang = st.sidebar.selectbox("🌐 UI Language", ["English", "Bahasa Melayu", "العربية"])
 st.sidebar.divider()
 
 # --- 2. SESSION STATE (Database Initialization) ---
@@ -33,7 +34,7 @@ if 'esca_scores' not in st.session_state:
 # --- 3. MAIN NAVIGATION ---
 menu = st.sidebar.radio("Main Menu", [
     "1. Good Samaritan & Intake", 
-    "2. Medical Team & Live OT Simulation", 
+    "2. OT Live Digital Simulation", # Updated
     "3. Clinical Command Center", 
     "4. Spiritual & Ritual Support",
     "5. AI Patient Loyalty Predictor", 
@@ -60,74 +61,52 @@ if menu == "1. Good Samaritan & Intake":
     st.divider()
     st.subheader("🛡️ ESCA+ Value Passport Setup")
     c1, c2, c3 = st.columns(3)
-    c1.radio("Gender Preference", ["Same Gender", "No Preference", "Flexible (Darurah)"])
-    c2.multiselect("Dietary Needs", ["Halal-Certified", "Vegan", "Vegetarian"])
-    c3.toggle("High Modesty Protocol (Extra Draping)")
+    with c1:
+        st.radio("Gender Preference", ["Same Gender", "No Preference", "Flexible (Darurah)"])
+    with c2:
+        st.multiselect("Dietary Needs", ["Halal-Certified", "Vegan", "Vegetarian"])
+    with c3:
+        st.toggle("High Modesty Protocol (Extra Draping)")
+    
     if st.button("Finalize Intake & Sync with HIS"):
         st.success("Intake Process Complete. Patient AX-2024 is now active.")
 
-# PAGE 2: MEDICAL TEAM & LIVE OT SIMULATION (UPDATED & FIXED)
-elif menu == "2. Medical Team & Live OT Simulation":
-    st.title("🔴 Operation Theater (OT) Live Digital Link")
-    st.info("💡 Education Purpose: Real-time simulation of cardiothoracic procedure for patient Sarah J. Abdullah.")
+# PAGE 2: OT LIVE DIGITAL SIMULATION (No more unstable YouTube)
+elif menu == "2. OT Live Digital Simulation":
+    st.title("🔴 Operation Theater (OT) Live Status Link")
+    st.info("💡 Note: For privacy & security, raw video feed is replaced by Digital Twin Tracking.")
     
-    # --- Live Video & Status Section ---
-    col_vid, col_stat = st.columns([2, 1])
+    col_vis, col_stat = st.columns([2, 1])
     
-    with col_vid:
-        st.subheader("📹 Live Procedure Visual (Simulation)")
-        # Menggunakan pautan video animasi perubatan yang stabil
-        st.video("https://www.youtube.com/watch?v=5UeS7M2i0Q8") 
-        st.info("🔒 Secure Link: This feed is encrypted and restricted to authorized guardians only.")
+    with col_vis:
+        st.subheader("🖥️ Digital Twin Procedure Monitor")
+        # Bina visualisasi grafik sebagai ganti video
+        fig_sim = go.Figure()
+        fig_sim.add_trace(go.Indicator(
+            mode = "gauge+number",
+            value = 75,
+            title = {'text': "Procedure Progress (%)"},
+            gauge = {'axis': {'range': [None, 100]}, 'bar': {'color': "darkred"}}
+        ))
+        fig_sim.update_layout(height=350)
+        st.plotly_chart(fig_sim, use_container_width=True)
+        st.write("**Visual Simulation Overlay:**")
+        st.image("https://img.freepik.com/free-vector/medical-infographic-concept_23-2148403310.jpg?t=st=1720000000&exp=1720003600&hmac=3d7f", caption="Simulated Surgical Anatomy View")
 
     with col_stat:
-        st.subheader("📊 Real-Time Status")
-        st.metric("Surgical Phase", "Internal Repair", "70% Complete")
-        st.write("**Current Action:** Suturing of the left ventricular wall.")
-        st.write("**Safety Status:** 🟢 All systems nominal.")
-        st.divider()
+        st.subheader("📊 Real-Time Vitals")
         st.metric("Heart Rate", "88 BPM", "Stable")
         st.metric("Oxygen (SpO2)", "98%", "Normal")
-        st.metric("Aurat Protection", "Active", "100% Covered")
+        st.metric("Aurat Status", "100% Covered", "Protected")
+        st.divider()
+        st.write("**Team in OT:**")
+        st.caption("Surgeon: Dr. Adam Syarif")
+        st.caption("Shariah Lead: Ustaz Hamdan")
 
     st.divider()
-
-    # --- Medical Team Board ---
-    st.subheader("👥 The Surgical Team (On-Duty)")
-    col_team1, col_team2 = st.columns(2)
-    with col_team1:
-        st.markdown("""
-        **Medical Specialists:**
-        *   👨‍⚕️ **Lead Surgeon:** Dr. Adam Syarif (MBBS, FRCS London)
-        *   👨‍⚕️ **Assisting Surgeon:** Dr. Johan Ariff (MD, MSurg)
-        *   👩‍⚕️ **Anesthesiologist:** Dr. Siti Hajar (Critical Care Specialist)
-        """)
-    with col_team2:
-        st.markdown("""
-        **Nursing & Support Team:**
-        *   👩‍⚕️ **Scrub Nurse:** Nurse Aishah (OT Specialist)
-        *   👩‍⚕️ **Circulating Nurse:** Nurse Farida (Patient Care)
-        *   👨‍⚕️ **Perfusionist:** Mr. Zaid (Heart-Lung Machine)
-        *   🌙 **Shariah Officer:** Ustaz Hamdan (On-Call Consultant)
-        """)
-
-    st.divider()
-
-    # --- Surgery Simulation Steps ---
-    st.subheader("⏱️ Live Procedure Tracking & ESCA+ Compliance")
-    surgery_steps = [
-        {"step": "Patient Positioning & Aurat Draping", "status": "Completed ✅", "esca": "Spiritual Sensitivity"},
-        {"step": "Anesthesia Induction (Halal-Pharma)", "status": "Completed ✅", "esca": "Institutional Integrity"},
-        {"step": "Surgical Incision", "status": "In Progress 🔵", "esca": "Clinical Competence"},
-        {"step": "Internal Tissue Repair", "status": "Pending ⏳", "esca": "Clinical Competence"},
-        {"step": "Closure & Cleaning", "status": "Pending ⏳", "esca": "Dignity Preservation"}
-    ]
-
-    for i, s in enumerate(surgery_steps):
-        with st.expander(f"Phase {i+1}: {s['step']}", expanded=(i == 2)):
-            col_s1, col_s2 = st.columns(2)
-            col_s1.write(f"**Status:** {s['status']}")
-            col_s2.write(f"**ESCA+ Domain:** {s['esca']}")
+    st.subheader("⏱️ Live Step Tracking")
+    surgery_steps = ["Pre-op Setup ✅", "Halal Anesthesia ✅", "Main Procedure 🔵", "Internal Closure ⏳"]
+    st.write(" | ".join(surgery_steps))
 
 # PAGE 3: CLINICAL COMMAND CENTER
 elif menu == "3. Clinical Command Center":
@@ -141,54 +120,46 @@ elif menu == "3. Clinical Command Center":
         fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False)
         st.plotly_chart(fig)
     with col2:
-        st.subheader("Clinical Conflict Resolver")
-        st.error("Conflict: Male Surgeon vs Female Preference (Emergency)")
+        st.subheader("Conflict Resolver")
+        st.error("Conflict: Male Surgeon vs Female Preference")
         if st.button("TRIGGER DARURAH OVERRIDE"):
             ts = datetime.now().strftime('%H:%M:%S')
-            st.session_state.agency_decisions.append({"time": ts, "event": "Darurah Consent", "details": "Authorized Dr. Adam (Male)"})
+            st.session_state.agency_decisions.append({"time": ts, "event": "Darurah Consent", "details": "Authorized Male Dr"})
             st.warning(f"Authorized at {ts}")
-        st.subheader("Audit Trail")
         st.table(pd.DataFrame(st.session_state.agency_decisions))
 
 # PAGE 4: SPIRITUAL & RITUAL SUPPORT
 elif menu == "4. Spiritual & Ritual Support":
-    st.title("🌙 Spiritual & Clinical-Shariah Reference")
+    st.title("🌙 Spiritual Support")
     c1, c2 = st.columns(2)
     with c1:
         st.subheader("Prayer Times (Ampang)")
         st.table(pd.DataFrame({"Prayer": ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"], "Time": ["05:58", "13:22", "16:35", "19:25", "20:34"]}))
-    with col2:
+    with c2: # Fixed NameError from previous version
         st.subheader("Shariah-Clinical Search")
-        query = st.text_input("Search Fatwa (e.g., Insulin, Anesthesia)")
-        if query: st.info(f"Result for '{query}': Permissible (Harus) in emergency situations (Maqasid Al-Shariah).")
+        query = st.text_input("Search Fatwa (e.g., Insulin)")
+        if query: st.info(f"Result: Permissible (Harus) in emergency.")
 
 # PAGE 5: AI PATIENT LOYALTY PREDICTOR
 elif menu == "5. AI Patient Loyalty Predictor":
-    st.title("🤖 ESCA+ AI Predictive Engine")
-    st.write("Predicting **Patient Loyalty** based on ESCA+ domain performance.")
-    col1, col2 = st.columns([1, 2])
-    with col1:
-        s_clin = st.slider("Clinical Competence", 0, 100, st.session_state.esca_scores["Clinical"])
-        s_spir = st.slider("Spiritual Sensitivity", 0, 100, st.session_state.esca_scores["Spiritual"])
-        s_ethi = st.slider("Ethical Justice", 0, 100, st.session_state.esca_scores["Ethical"])
-        loyalty_score = (s_clin * 0.25) + (s_spir * 0.15) + (s_ethi * 0.30) + (100 * 0.30) 
-    with col2:
-        fig_g = go.Figure(go.Indicator(mode = "gauge+number", value = loyalty_score, title = {'text': "Loyalty Probability (%)"},
-                     gauge = {'axis': {'range': [0, 100]}, 'bar': {'color': "darkblue"},
-                     'steps': [{'range': [0, 50], 'color': "red"}, {'range': [85, 100], 'color': "green"}]}))
-        st.plotly_chart(fig_g)
+    st.title("🤖 ESCA+ AI Predictor")
+    s_clin = st.slider("Clinical Competence", 0, 100, 93)
+    s_ethi = st.slider("Ethical Justice", 0, 100, 99)
+    loyalty = (s_clin * 0.4) + (s_ethi * 0.6) # Formula prediction
+    st.metric("Predicted Loyalty Probability", f"{loyalty}%")
+    st.progress(loyalty/100)
 
 # PAGE 6: FINANCIAL & AUDIT REPORTS
 else:
-    st.title("💰 Financial Transparency & Audit Reports")
-    c1, c2 = st.columns(2)
+    st.title("💰 Financial & Audit Reports")
+    c1, c2 = st.columns(2) # Define c1, c2
     with c1:
-        st.subheader("Ethical Billing (Transparent)")
-        bill = pd.DataFrame({"Item": ["Surgery", "ICU", "Good Samaritan Case Fee", "Spiritual Care"], "Cost (RM)": [15000, 2500, 0, 0]})
+        st.subheader("Ethical Billing")
+        bill = pd.DataFrame({"Item": ["Surgery", "ICU", "Spiritual Care"], "Cost (RM)": [15000, 2500, 0]})
         st.table(bill)
-    with c2:
-        st.subheader("Audit Integrity Score")
-        fig_p = px.pie(values=[95, 5], names=['Compliant', 'Non-Compliant'], title="Institutional Integrity Index")
+    with c2: # Fixed col2 to c2
+        st.subheader("Integrity Index")
+        fig_p = px.pie(values=[95, 5], names=['Compliant', 'Non-Compliant'])
         st.plotly_chart(fig_p)
-    st.button("📄 Generate ESCA+ Compliance Certificate")
-    st.write(f"© 2025 Mohd Khairul Ridhuan Bin Mohd Fadzil")
+
+st.sidebar.write(f"© 2025 Mohd Khairul Ridhuan Bin Mohd Fadzil")
