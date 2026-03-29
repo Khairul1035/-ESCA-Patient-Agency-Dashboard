@@ -7,20 +7,20 @@ from datetime import datetime, timedelta
 import time
 
 # --- 1. CONFIGURATION ---
-st.set_page_config(page_title="Hospital Alpha | ESCA+ Platinum Dashboard", layout="wide", page_icon="🏥")
+st.set_page_config(page_title="Hospital Alpha | The ESCA+ Journey", layout="wide", page_icon="🏥")
 
-# --- 2. SESSION STATE ---
+# --- 2. SESSION STATE (Managing the Story Flow) ---
+if 'journey_phase' not in st.session_state:
+    st.session_state.journey_phase = "Accident"
 if 'visitor_count' not in st.session_state:
-    st.session_state.visitor_count = 1452
-if 'scan_complete' not in st.session_state:
-    st.session_state.scan_complete = False
-if 'simulation_time_index' not in st.session_state:
-    st.session_state.simulation_time_index = 0
+    st.session_state.visitor_count = 1589
+if 'scan_data' not in st.session_state:
+    st.session_state.scan_data = None
 
 # --- 3. SIDEBAR: LEAD RESEARCHER PROFILE ---
 st.sidebar.header("Lead Researcher")
 st.sidebar.subheader("MOHD KHAIRUL RIDHUAN BIN MOHD FADZIL")
-with st.sidebar.expander("🎓 Expertise Profile"):
+with st.sidebar.expander("🎓 Expertise & Profile"):
     st.write("""
     - **Business Management & Islamic Studies**
     - **Corporate Sustainability**
@@ -30,126 +30,152 @@ with st.sidebar.expander("🎓 Expertise Profile"):
 st.sidebar.divider()
 st.sidebar.write(f"📈 **Project Visitors:** `{st.session_state.visitor_count + 1}`")
 st.sidebar.write(f"📅 **Date:** {datetime.now().strftime('%d %B %Y')}")
-st.sidebar.write(f"⏰ **Real-time:** {datetime.now().strftime('%H:%M:%S')}")
 st.sidebar.divider()
 
-menu = st.sidebar.radio("Navigation Menu", [
-    "Dashboard Overview",
-    "1. Accident Triage & Intake", 
-    "2. Advanced OT: 6-Hour Live Simulation", # Redesigned
-    "3. Surgical Team Transparency", 
-    "4. AI Loyalty Prediction", 
-    "5. Financial & Ethical Audit"
-])
+# Navigation via Story Phases
+st.sidebar.title("Journey Phases")
+phase_options = [
+    "Accident & Triage", 
+    "AI Robotic Diagnostics", 
+    "Specialist Matching", 
+    "Live OT (6-Hour Simulation)", 
+    "Outcomes & Billing"
+]
+st.session_state.journey_phase = st.sidebar.radio("Go to Phase:", phase_options)
 
 # --- 4. GLOBAL HEADER & DISCLAIMER ---
-st.markdown("<h1 style='text-align: center; color: #004d99;'>HOSPITAL ALPHA</h1>", unsafe_allow_html=True)
-st.warning("⚠️ **DISCLAIMER:** For **EDUCATION PURPOSE ONLY**. All clinical simulations are research-based prototypes by Mohd Khairul Ridhuan.")
+st.markdown("<h1 style='text-align: center; color: #004d99;'>HOSPITAL ALPHA: THE ESCA+ JOURNEY</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Real-time AI Simulation for High-Trauma Emergency Cases</p>", unsafe_allow_html=True)
+st.warning("⚠️ **DISCLAIMER:** This application is for **EDUCATION PURPOSE ONLY**. All data, clinical outcomes, and AI logic are research prototypes by Mohd Khairul Ridhuan.")
 
-# --- 5. SIMULATION DATA GENERATOR (6 Hours, 10-min intervals = 36 steps) ---
-def generate_surgery_log():
-    start_time = datetime.strptime("09:00", "%H:%M")
-    logs = []
-    events = [
-        ("Normal", "Monitor Vitals", "Approved", "Steady state"),
-        ("Tachycardia", "Increase Beta-Blocker", "Modified by Dr", "Clinical risk: BP too low for AI suggestion"),
-        ("Minor Bleeding", "Use Bio-Sealant (Porcine-based)", "REJECTED by Dr", "Ethical Conflict: Halal alternative requested"),
-        ("Normal", "Maintain Anesthesia", "Approved", "Spiritual Modesty Draping Verified"),
-        ("Oxygen Drop", "Manual Ventilation Support", "Approved", "Dr took over Robotic vent control"),
-        ("Suturing", "Automated Robotic Stitch", "Approved", "Precision within 0.1mm")
-    ]
-    for i in range(37): # 0 to 6 hours
-        current_time = (start_time + timedelta(minutes=i*10)).strftime("%H:%M")
-        status, ai_rec, dr_dec, note = events[i % len(events)]
-        logs.append({
-            "Time": current_time,
-            "Patient Status": status,
-            "AI Robot Advice": ai_rec,
-            "Doctor Decision": dr_dec,
-            "Clinical-Ethical Notes": note
-        })
-    return pd.DataFrame(logs)
+# --- 5. STORYTELLING & LOGIC ---
 
-# --- 6. PAGE LOGIC ---
-
-if menu == "Dashboard Overview":
-    st.title("System Overview")
-    st.write("Integrating AI diagnostics with the ESCA+ Ethics Model. Designed for high-transparency Islamic Medical Tourism.")
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Clinical Competence", "98%", "JCI Verified")
-    col2.metric("Spiritual Sensitivity", "100%", "Halal-Pharma")
-    col3.metric("Ethical Justice", "99%", "Transparent Billing")
-
-elif menu == "2. Advanced OT: 6-Hour Live Simulation":
-    st.header("🤖 Advanced OT: 6-Hour Surgical Timeline")
-    st.info("💡 Tracking the interaction between AI Robotic Advice and Doctor's Human Oversight (Every 10 Minutes).")
-    
-    # 3D Scan Placeholder (Removed the fruit picture!)
-    if not st.session_state.scan_complete:
-        if st.button("🚀 Run AI 3D Robotic Scan"):
-            with st.status("Scanning anatomy... creating Digital Twin..."):
-                time.sleep(2)
-            st.session_state.scan_complete = True
-            st.rerun()
-    else:
-        # Timeline Slider for the 6-hour surgery
-        st.subheader("⏱️ Surgical Timeline Control")
-        time_idx = st.select_slider("Select time-stamp to view procedure detail (09:00 - 15:00)", options=range(37), value=st.session_state.simulation_time_index)
-        st.session_state.simulation_time_index = time_idx
-        
-        full_log = generate_surgery_log()
-        current_log = full_log.iloc[time_idx]
-        
-        # Displaying the "Critical Interaction" Dashboard
-        c1, c2, c3 = st.columns([1, 2, 2])
-        
-        with c1:
-            st.metric("Timeline", f"{current_log['Time']}")
-            st.write(f"**Patient Status:** {current_log['Patient Status']}")
-        
-        with c2:
-            st.error(f"🤖 **AI Advice:** {current_log['AI Robot Advice']}")
-            st.success(f"👨‍⚕️ **Dr. Decision:** {current_log['Doctor Decision']}")
-            
-        with c3:
-            st.info(f"📝 **Note:** {current_log['Clinical-Ethical Notes']}")
-            
-        st.divider()
-        
-        # Live Vitals Simulation for that specific time
-        v1, v2, v3 = st.columns(3)
-        v1.metric("SpO2", "98%" if time_idx % 4 != 0 else "89%", delta="-9%" if time_idx % 4 == 0 else "Normal")
-        v2.metric("HR", f"{80 + time_idx} BPM")
-        v3.metric("Aurat Status", "100% Covered", "Protected")
-
-        # Display full log up to current time
-        st.subheader("📜 Detailed Surgical Log (Cumulative)")
-        st.dataframe(full_log.head(time_idx + 1), use_container_width=True)
-
-elif menu == "3. Surgical Team Transparency":
-    st.header("👥 Surgical & Support Personnel")
-    st.write("Under the ESCA+ Model, transparency of personnel is vital for Patient Agency.")
+# PHASE 1: ACCIDENT & TRIAGE
+if st.session_state.journey_phase == "Accident & Triage":
+    st.header("📍 Phase 1: Emergency Impact")
+    st.error("**SCENARIO:** A family of three involved in a high-speed collision on the MRR2 Highway. A witness (Good Samaritan) rushes the victims to Hospital Alpha—the nearest ESCA+ certified center.")
     
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader("Medical Specialists")
-        st.info("**Lead Surgeon:** Dr. Adam Syarif\n- MBBS (Malaya), FRCS (London)\n- Expertise: Cardiothoracic Robotic Surgery")
-        st.info("**Anesthesiologist:** Dr. Siti Hajar\n- MD (USM), MMed (Anaesth)\n- Expertise: Halal-Pharma Induction")
+        st.subheader("Good Samaritan Registration")
+        witness = st.text_input("Witness Name", placeholder="Enter name of the citizen rescuer")
+        st.info("Under ESCA+ Ethical Justice, the witness is legally protected and not liable for costs.")
     with col2:
-        st.subheader("Support Team")
-        st.write("- **Scrub Nurse:** Nurse Aishah (OT Specialist)")
-        st.write("- **Circulating Nurse:** Nurse Farida (Patient Care)")
-        st.write("- **Shariah Lead:** Ustaz Hamdan (Bioethics & Modesty Monitor)")
+        st.subheader("Initial Triage")
+        st.write("**Victims:** Father (Stable), Mother (Critical), Child (Critical).")
+        st.write("**Status:** Triage Red. Immediate AI Diagnostic Scan requested.")
+    
+    st.divider()
+    st.subheader("🛡️ Initial ESCA+ Value Passport")
+    st.write("Even in crisis, Hospital Alpha initiates dignity protocols.")
+    st.toggle("Activate High Modesty (Aurat) Protocol", value=True)
+    st.toggle("Halal-Pharma Only Anesthesia", value=True)
 
-elif menu == "4. AI Loyalty Prediction":
-    st.header("🤖 AI Patient Loyalty Engine")
-    score = st.slider("Select ESCA+ Alignment Score (%)", 0, 100, 85)
-    st.metric("Predicted Loyalty", f"{score * 0.95}%")
-    st.progress(score/100)
+# PHASE 2: AI ROBOTIC DIAGNOSTICS
+elif st.session_state.journey_phase == "AI Robotic Diagnostics":
+    st.header("📡 Phase 2: AI Robotic Full-Body Scanning")
+    st.write("The victims are placed in the AI Robotic Scanner. The algorithm analyzes damage and survival probability.")
+    
+    if st.button("🚀 Start 360° AI Robotic Scan"):
+        with st.status("AI Robot scanning Patient 01 (Mother)...", expanded=True) as status:
+            time.sleep(1)
+            st.write("Skeletal Mapping: Fractures detected in Thorax.")
+            time.sleep(1)
+            st.write("Organ Scan: Internal hemorrhage in Liver and Spleen.")
+            time.sleep(1)
+            st.write("Neural Scan: Brain activity stable but elevated intracranial pressure.")
+            status.update(label="Scan Complete! Digital Twin Generated.", state="complete")
+            st.session_state.scan_data = True
 
-else:
-    st.header("💰 Financial & Ethical Audit")
-    st.table(pd.DataFrame({"Service": ["AI Robotic Scan", "Surgery", "Audit"], "Cost (RM)": [5000, 15000, 0]}))
+    if st.session_state.scan_data:
+        c1, c2 = st.columns([2, 1])
+        with c1:
+            st.subheader("3D Damage Intensity (Algorithm Output)")
+            # Simulated 3D Bar Chart for organ damage
+            damage_df = pd.DataFrame({
+                "Organ": ["Heart", "Lungs", "Liver", "Spleen", "Brain"],
+                "Damage %": [15, 45, 78, 82, 30]
+            })
+            fig = px.bar(damage_df, x="Organ", y="Damage %", color="Damage %", color_continuous_scale="Reds")
+            st.plotly_chart(fig, use_container_width=True)
+        with c2:
+            st.subheader("AI Prognosis")
+            st.metric("Body Damage Index", "64%", delta="Critical")
+            st.metric("Survival Probability", "72.4%")
+            st.error("Urgency: Surgery required within 15 minutes.")
 
+# PHASE 3: SPECIALIST MATCHING
+elif st.session_state.journey_phase == "Specialist Matching":
+    st.header("👨‍⚕️ Phase 3: AI Specialist Alignment")
+    st.write("Hospital Alpha's algorithm matches the trauma severity with the best available expertise.")
+    
+    st.subheader("Expertise Matching Result")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.success("✅ **Primary Match Found (On-Call):**")
+        st.info("**Dr. Adam Syarif**\n- Education: MBBS (Malaya), FRCS (London)\n- Expertise: Cardiothoracic Trauma Surgery\n- Availability: READY (OT-04)")
+    
+    with col2:
+        st.warning("🔄 **Secondary Search (10km Radius):**")
+        st.write("Analyzing nearby Hospital Alpha branches for back-up specialists due to multiple critical victims.")
+        st.write("- Found: **Dr. Sarah Lim** (Pediatric Surgeon) - 4km away (En route).")
+    
+    st.divider()
+    st.write("**Support Team Assigned:** Nurse Aishah (Scrub), Mr. Zaid (Perfusionist), Ustaz Hamdan (Shariah Ethics Monitor).")
+
+# PHASE 4: LIVE OT (6-HOUR SIMULATION)
+elif st.session_state.journey_phase == "Live OT (6-Hour Simulation)":
+    st.header("🔴 Phase 4: Live Surgical Procedure Monitor")
+    st.info("The Mother is in OT-04. This 6-hour timeline tracks the interaction between the AI Robot and the Surgeon.")
+    
+    time_idx = st.select_slider("Family View Timeline (09:00 - 15:00)", options=range(37))
+    
+    # 6-Hour Data Generation
+    start_time = datetime.strptime("09:00", "%H:%M")
+    current_time = (start_time + timedelta(minutes=time_idx*10)).strftime("%H:%M")
+    
+    c1, c2, c3 = st.columns([1, 2, 2])
+    with c1:
+        st.metric("Time", current_time)
+        st.write("**Vitals:** 🟢 Stable" if time_idx < 20 else "⚠️ Critical")
+    with c2:
+        st.error(f"🤖 **AI Advice:** {['Optimize oxygen', 'Use bio-sealant', 'Emergency bypass'][time_idx % 3]}")
+        st.success(f"👨‍⚕️ **Dr. Action:** {['Approved', 'REJECTED - Use Halal alternative', 'Handled manually'][time_idx % 3]}")
+    with c3:
+        st.info(f"🌙 **ESCA+ Status:** {['Aurat Covered', 'Modesty Draping Verified', 'Shariah Lead Notified'][time_idx % 3]}")
+
+    st.subheader("Cumulative Surgical Log")
+    st.caption("Updated every 10 minutes for family transparency.")
+    # Show log up to current time
+    st.write(f"Displaying data for first {time_idx * 10} minutes of the operation.")
+
+# PHASE 5: OUTCOMES & BILLING
+elif st.session_state.journey_phase == "Outcomes & Billing":
+    st.header("💰 Phase 5: Outcomes & Ethical Accountability")
+    
+    st.subheader("Surgical Outcomes")
+    col1, col2, col3 = st.columns(3)
+    col1.success("**Mother:** SURVIVED\n(Transferred to ICU)")
+    col2.warning("**Father:** STABLE\n(Ward Observation)")
+    col3.error("**Child:** CRITICAL\n(Under AI Monitoring)")
+
+    st.divider()
+    
+    st.subheader("Ethical Billing Transparency")
+    bill_df = pd.DataFrame({
+        "Service Category": ["AI Robotic Scan", "Specialist Surgery", "Spiritual Support", "Witness Intake Fee"],
+        "Charge (RM)": [5000, 15000, 0, 0]
+    })
+    st.table(bill_df)
+    st.info("💡 Note: Spiritual support and Good Samaritan processing fees are RM 0 to ensure Ethical Justice.")
+    
+    st.divider()
+    
+    st.subheader("Institutional Integrity Certificate")
+    st.write("This procedure complied 99.4% with the ESCA+ Ethics Model.")
+    st.button("📄 Generate Final Compliance Report (PDF)")
+
+# --- 7. FOOTER ---
 st.sidebar.divider()
 st.sidebar.write(f"© 2025 **Mohd Khairul Ridhuan Bin Mohd Fadzil**")
