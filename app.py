@@ -66,7 +66,7 @@ if menu == "1. Good Samaritan & Intake":
     if st.button("Finalize Intake & Sync with HIS"):
         st.success("Intake Process Complete. Patient AX-2024 is now active.")
 
-# PAGE 2: MEDICAL TEAM & LIVE OT SIMULATION (UPDATED WITH VIDEO & TEAM)
+# PAGE 2: MEDICAL TEAM & LIVE OT SIMULATION (UPDATED & FIXED)
 elif menu == "2. Medical Team & Live OT Simulation":
     st.title("🔴 Operation Theater (OT) Live Digital Link")
     st.info("💡 Education Purpose: Real-time simulation of cardiothoracic procedure for patient Sarah J. Abdullah.")
@@ -75,9 +75,10 @@ elif menu == "2. Medical Team & Live OT Simulation":
     col_vid, col_stat = st.columns([2, 1])
     
     with col_vid:
-       # Gantikan dengan link baru di bawah (Animasi Bypass Jantung 3D - Embed Friendly)
-    st.video("https://www.youtube.com/watch?v=5UeS7M2i0Q8") 
-    st.info("🔒 Secure Link: This feed is encrypted and restricted to authorized guardians only.")
+        st.subheader("📹 Live Procedure Visual (Simulation)")
+        # Menggunakan pautan video animasi perubatan yang stabil
+        st.video("https://www.youtube.com/watch?v=5UeS7M2i0Q8") 
+        st.info("🔒 Secure Link: This feed is encrypted and restricted to authorized guardians only.")
 
     with col_stat:
         st.subheader("📊 Real-Time Status")
@@ -156,7 +157,7 @@ elif menu == "4. Spiritual & Ritual Support":
     with c1:
         st.subheader("Prayer Times (Ampang)")
         st.table(pd.DataFrame({"Prayer": ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"], "Time": ["05:58", "13:22", "16:35", "19:25", "20:34"]}))
-    with c2:
+    with col2:
         st.subheader("Shariah-Clinical Search")
         query = st.text_input("Search Fatwa (e.g., Insulin, Anesthesia)")
         if query: st.info(f"Result for '{query}': Permissible (Harus) in emergency situations (Maqasid Al-Shariah).")
