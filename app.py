@@ -24,7 +24,7 @@ st.sidebar.divider()
 if 'patient_status' not in st.session_state:
     st.session_state.patient_status = "Unidentified"
 if 'surgery_step' not in st.session_state:
-    st.session_state.surgery_step = 2 # Simulation starts at step 2
+    st.session_state.surgery_step = 2 
 if 'agency_decisions' not in st.session_state:
     st.session_state.agency_decisions = []
 if 'esca_scores' not in st.session_state:
@@ -66,13 +66,33 @@ if menu == "1. Good Samaritan & Intake":
     if st.button("Finalize Intake & Sync with HIS"):
         st.success("Intake Process Complete. Patient AX-2024 is now active.")
 
-# PAGE 2: MEDICAL TEAM & LIVE OT SIMULATION
+# PAGE 2: MEDICAL TEAM & LIVE OT SIMULATION (UPDATED WITH VIDEO & TEAM)
 elif menu == "2. Medical Team & Live OT Simulation":
     st.title("🔴 Operation Theater (OT) Live Digital Link")
     st.info("💡 Education Purpose: Real-time simulation of cardiothoracic procedure for patient Sarah J. Abdullah.")
     
+    # --- Live Video & Status Section ---
+    col_vid, col_stat = st.columns([2, 1])
+    
+    with col_vid:
+        st.subheader("📹 Live Procedure Visual (Simulation)")
+        # Menggunakan video simulasi perubatan dari YouTube untuk tujuan pendidikan
+        st.video("https://www.youtube.com/watch?v=V90I2tE9U6Y") 
+        st.info("🔒 Secure Link: This feed is encrypted and restricted to authorized guardians only.")
+
+    with col_stat:
+        st.subheader("📊 Real-Time Status")
+        st.metric("Surgical Phase", "Internal Repair", "70% Complete")
+        st.write("**Current Action:** Suturing of the left ventricular wall.")
+        st.write("**Safety Status:** 🟢 All systems nominal.")
+        st.divider()
+        st.metric("Heart Rate", "88 BPM", "Stable")
+        st.metric("Oxygen (SpO2)", "98%", "Normal")
+        st.metric("Aurat Protection", "Active", "100% Covered")
+
     st.divider()
-    # OT Team Board
+
+    # --- Medical Team Board ---
     st.subheader("👥 The Surgical Team (On-Duty)")
     col_team1, col_team2 = st.columns(2)
     with col_team1:
@@ -92,10 +112,11 @@ elif menu == "2. Medical Team & Live OT Simulation":
         """)
 
     st.divider()
-    # Surgery Simulation Progress
+
+    # --- Surgery Simulation Steps ---
     st.subheader("⏱️ Live Procedure Tracking & ESCA+ Compliance")
     surgery_steps = [
-        {"step": "Patient Positioning & Aurat Draping", "status": "Completed ✅", "esca": "Spiritual Sensitivity (High)"},
+        {"step": "Patient Positioning & Aurat Draping", "status": "Completed ✅", "esca": "Spiritual Sensitivity"},
         {"step": "Anesthesia Induction (Halal-Pharma)", "status": "Completed ✅", "esca": "Institutional Integrity"},
         {"step": "Surgical Incision", "status": "In Progress 🔵", "esca": "Clinical Competence"},
         {"step": "Internal Tissue Repair", "status": "Pending ⏳", "esca": "Clinical Competence"},
@@ -107,13 +128,6 @@ elif menu == "2. Medical Team & Live OT Simulation":
             col_s1, col_s2 = st.columns(2)
             col_s1.write(f"**Status:** {s['status']}")
             col_s2.write(f"**ESCA+ Domain:** {s['esca']}")
-            if i == 2: st.toast("Active Phase: Surgical Intervention", icon="🏥")
-
-    st.subheader("📊 Live Clinical Vitals & Modesty Status")
-    v1, v2, v3 = st.columns(3)
-    v1.metric("Heart Rate", "88 BPM", "Stable")
-    v2.metric("Oxygen (SpO2)", "98%", "Normal")
-    v3.metric("Aurat Protection", "Active", "100% Covered")
 
 # PAGE 3: CLINICAL COMMAND CENTER
 elif menu == "3. Clinical Command Center":
@@ -157,7 +171,7 @@ elif menu == "5. AI Patient Loyalty Predictor":
         s_clin = st.slider("Clinical Competence", 0, 100, st.session_state.esca_scores["Clinical"])
         s_spir = st.slider("Spiritual Sensitivity", 0, 100, st.session_state.esca_scores["Spiritual"])
         s_ethi = st.slider("Ethical Justice", 0, 100, st.session_state.esca_scores["Ethical"])
-        loyalty_score = (s_clin * 0.25) + (s_spir * 0.15) + (s_ethi * 0.30) + (100 * 0.30) # Simulating others
+        loyalty_score = (s_clin * 0.25) + (s_spir * 0.15) + (s_ethi * 0.30) + (100 * 0.30) 
     with col2:
         fig_g = go.Figure(go.Indicator(mode = "gauge+number", value = loyalty_score, title = {'text': "Loyalty Probability (%)"},
                      gauge = {'axis': {'range': [0, 100]}, 'bar': {'color': "darkblue"},
